@@ -1,5 +1,4 @@
 name: Scrape
-
 on:
   workflow_dispatch:
     inputs:
@@ -27,13 +26,10 @@ jobs:
     steps:
       - id: normalize-repository-name
         run: echo "repository=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
-
       - id: set-container-image
         run: echo "image=${{ env.REGISTRY }}/${{ steps.normalize-repository-name.outputs.repository }}:${{ github.event.inputs.containerTag || 'latest' }}" >> $GITHUB_OUTPUT
-
       - name: Pull container image
         run: docker pull ${{ steps.set-container-image.outputs.image }}
-
       - name: Run scraper
         run: >
           docker run --rm
@@ -41,9 +37,11 @@ jobs:
           -e DEBUG
           -e TZ
           -e SEND_NEW_CONFIG_TO_TG
+          -e MONEYMAN_UNSAFE_STDOUT
           ${{ steps.set-container-image.outputs.image }}
         env:
           MONEYMAN_CONFIG: ${{ secrets.MONEYMAN_CONFIG }}
           DEBUG: ${{ github.event.inputs.DEBUG || '' }}
           TZ: "Asia/Jerusalem"
           SEND_NEW_CONFIG_TO_TG: ${{ github.event.inputs.sendNewConfigToTg }}
+          MONEYMAN_UNSAFE_STDOUT: "true"
