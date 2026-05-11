@@ -44,4 +44,4 @@ jobs:
           DEBUG: ${{ github.event.inputs.DEBUG || '' }}
           TZ: "Asia/Jerusalem"
           SEND_NEW_CONFIG_TO_TG: ${{ github.event.inputs.sendNewConfigToTg }}
-          MONEYMAN_UNSAFE_STDOUT: "true"
+          MONEYMAN_UNSAFE_STDOUT: "false"
