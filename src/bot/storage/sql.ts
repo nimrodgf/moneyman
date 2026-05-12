@@ -196,6 +196,11 @@ export class SqlStorage implements TransactionStorage {
       : { rows: [] };
     const existingIds = new Set(existingRows.rows.map((row) => row.unique_id));
 
+    // Deduplicate by unique_id within same batch
+    const deduped = new Map<string, TransactionRow>();
+    for (const tx of txns) deduped.set(tx.uniqueId, tx);
+    txns = Array.from(deduped.values());
+
     const insert = buildInsertStatement(
       schema,
       TRANSACTIONS_TABLE_NAME,
