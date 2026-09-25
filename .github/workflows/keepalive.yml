@@ -1,0 +1,24 @@
+name: Keepalive
+
+# מונע מגיטהאב להשבית את הסקרייפ אחרי 60 יום ללא פעילות ברפוזיטורי.
+# רץ ב-1 לכל חודש ודוחף קומיט ריק, כך שהשעון של 60 הימים מתאפס.
+
+on:
+  schedule:
+    - cron: "0 3 1 * *"
+  workflow_dispatch:
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Push empty commit
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit --allow-empty -m "chore: keepalive $(date -u +%Y-%m-%d)"
+          git push
